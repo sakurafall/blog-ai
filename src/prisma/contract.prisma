@@ -1,0 +1,14 @@
+// use prisma-8
+
+model Post {
+  id          Int      @id @default(autoincrement())
+  slug        String   @unique
+  title       String
+  description String
+  content     String
+  category    String
+  published   Boolean  @default(true)
+
+  createdAt   TimestamptzString @default(now())
+  updatedAt   temporal.updatedAtString()
+}

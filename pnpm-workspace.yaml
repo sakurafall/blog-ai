@@ -1,0 +1,7 @@
+allowBuilds:
+  sharp: true
+  esbuild: true
+  msgpackr-extract: true
+  workered: true
+  workerd: true
+unrs-resolver: false
