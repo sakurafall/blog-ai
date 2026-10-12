@@ -97,44 +97,90 @@ export function PostForm({
         )}
       </div>
 
-      <div>
+      <div className="space-y-2">
         <label
-          htmlFor="category"
-          className="mb-2 block text-sm font-medium"
+          htmlFor="categoryId"
+          className="block text-sm font-medium text-gray-900"
         >
           分类
         </label>
 
-        <select
-          name="categoryId"
-          defaultValue={
-            post?.categoryId
-              ? String(post.categoryId)
-              : ""
-          }
-          className="..."
-        >
-          <option value="">
-            请选择分类
-          </option>
-
-          {categories.map((category) => (
-            <option
-              key={category.id}
-              value={category.id}
-            >
-              {category.name}
+        <div className="relative">
+          <select
+            id="categoryId"
+            name="categoryId"
+            defaultValue={
+              post?.categoryId
+                ? String(post.categoryId)
+                : ""
+            }
+            className="
+              h-11
+              w-full
+              appearance-none
+              rounded-md
+              border
+              border-gray-300
+              px-3
+              pr-10
+              text-sm
+              text-gray-900
+              outline-none
+              transition
+              focus:border-gray-900
+              focus:ring-2
+              focus:ring-gray-200
+              disabled:cursor-not-allowed
+              disabled:bg-gray-100
+              disabled:text-gray-500
+            "
+          >
+            <option value="">
+              请选择分类
             </option>
-          ))}
-        </select>
 
-        {state.fieldErrors?.categoryId?.map(
-          (error) => (
-            <p key={error} className="text-sm text-red-600">
-              {error}
-            </p>
-          ),
-        )}
+            {categories.map((category) => (
+              <option
+                key={category.id}
+                value={category.id}
+              >
+                {category.name}
+              </option>
+            ))}
+          </select>
+
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 20 20"
+            fill="currentColor"
+            aria-hidden="true"
+            className="
+              pointer-events-none
+              absolute
+              right-3
+              top-1/2
+              h-4
+              w-4
+              -translate-y-1/2
+              text-gray-400
+            "
+          >
+            <path
+              fillRule="evenodd"
+              d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
+              clipRule="evenodd"
+            />
+          </svg>
+        </div>
+
+        {state.fieldErrors?.categoryId?.map((error) => (
+          <p
+            key={error}
+            className="text-sm text-red-600"
+          >
+            {error}
+          </p>
+        ))}
       </div>
 
       <div>

@@ -63,7 +63,7 @@ export default async function AdminPostsPage() {
                 </td>
 
                 <td className="px-4 py-3 text-gray-600">
-                  {post.category}
+                  {post.category.name}
                 </td>
 
                 <td className="px-4 py-3">

@@ -12,7 +12,7 @@ export function PostCard({ post }: PostCardProps) {
       <div className="mb-2 flex gap-3 text-sm text-gray-500">
         <span>{new Date(post.createdAt).toLocaleDateString("zh-CN")}</span>
         <span>·</span>
-        <span>{post.category}</span>
+        <span>{post.category.name}</span>
       </div>
 
       <h3 className="text-xl font-semibold">

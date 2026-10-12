@@ -5,7 +5,11 @@ import { db } from "@/prisma/db";
 export async function getPublishedPosts() {
   const posts = await db.orm.public.Post.where({
     published: true,
-  }).all();
+  }).include("category").all();
+
+  console.dir(posts, {
+    depth: null,
+  });
 
   return posts;
 }
@@ -14,13 +18,13 @@ export async function getPostBySlugFromDb(slug: string) {
   const post = await db.orm.public.Post.where({
     slug,
     published: true,
-  }).first();
+  }).include("category").first();
 
   return post;
 }
 
 export async function getAllPostsForAdmin() {
-  const posts = await db.orm.public.Post.all();
+  const posts = await db.orm.public.Post.include("category").all();
 
   return posts;
 }
@@ -28,7 +32,7 @@ export async function getAllPostsForAdmin() {
 export async function getPostByIdForAdmin(id: number) {
   const post = await db.orm.public.Post.where({
     id,
-  }).first();
+  }).include("category").first();
 
   return post;
 }
@@ -50,7 +54,7 @@ export async function getPostStats() {
 
 // 获得最近的文章（支持数量限制）
 export async function getRecentPosts(limit = 5) {
-  const posts = await db.orm.public.Post.all();
+  const posts = await db.orm.public.Post.include("category").all();
 
   return posts
     .sort(

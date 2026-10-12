@@ -88,7 +88,7 @@ export default async function AdminPage() {
                     </Link>
 
                     <div className="mt-1 flex items-center gap-2 text-xs text-gray-500">
-                      <span>{post.category}</span>
+                      <span>{post.category.name}</span>
                       <span>·</span>
                       <span>
                         {new Date(post.createdAt).toLocaleDateString(

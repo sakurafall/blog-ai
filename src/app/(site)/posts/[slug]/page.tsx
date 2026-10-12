@@ -33,7 +33,7 @@ export default async function PostDetailPage({
               {new Date(post.createdAt).toLocaleDateString("zh-CN")}
             </span>
             <span>·</span>
-            <span>{post.category}</span>
+            <span>{post.category.name}</span>
           </div>
 
           <h1 className="text-4xl font-bold tracking-tight">{post.title}</h1>

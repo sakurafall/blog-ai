@@ -1,8 +1,14 @@
+export type PostCategory = {
+  id: number;
+  name: string;
+  slug: string;
+};
+
 export type PostFormData = {
   id?: number;
   title?: string;
   slug?: string;
-  categoryId?: string[];
+  categoryId?: number;
   description?: string;
   content?: string;
   published?: boolean;
@@ -13,7 +19,8 @@ export type PostListItem = {
   slug: string;
   title: string;
   description: string;
-  categoryId?: string[];
+  categoryId: number;
+  category: PostCategory;
   createdAt: string;
   updatedAt: string;
   published: boolean;
