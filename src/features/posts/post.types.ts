@@ -2,7 +2,7 @@ export type PostFormData = {
   id?: number;
   title?: string;
   slug?: string;
-  category?: string;
+  categoryId?: string[];
   description?: string;
   content?: string;
   published?: boolean;
@@ -13,7 +13,7 @@ export type PostListItem = {
   slug: string;
   title: string;
   description: string;
-  category: string;
+  categoryId?: string[];
   createdAt: string;
   updatedAt: string;
   published: boolean;

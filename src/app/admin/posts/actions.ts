@@ -1,42 +1,49 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
+
 import { db } from "@/prisma/db";
+import { requireAdmin } from "@/lib/auth/require-admin";
 import { postSchema } from "@/features/posts/post.schema";
+import { getPostFormData } from "@/features/posts/post.form";
+import { revalidatePostPages } from "@/features/posts/post.revalidate";
+import type { PostMutationState } from "@/features/posts/post-action.types";
+
+import { AppError } from "@/lib/errors/app-error";
+import { ERROR_CODES } from "@/lib/errors/error-codes";
+
+// 鉴权
+// → 取表单数据
+// → Zod 校验
+// → 查重
+// → 数据库操作
+// → revalidate
+// → redirect
 
 export type PostActionState = {
   error?: string;
 
   // 手写
-  // fieldErrors?: {
-  //   title?: string[];
-  //   slug?: string[];
-  //   category?: string[];
-  //   description?: string[];
-  //   content?: string[];
-  // };
+  fieldErrors?: {
+    title?: string[];
+    slug?: string[];
+    categoryId?: string[];
+    description?: string[];
+    content?: string[];
+  };
 
   // 索引签名自动匹配（有很多字段）
-  fieldErrors?: Record<string, string[] | undefined>;
+  // fieldErrors?: Record<string, string[] | undefined>;
 };
 
-function getPostFormData(formData: FormData) {
-  return {
-    title: String(formData.get("title") || "").trim(),
-    slug: String(formData.get("slug") || "").trim(),
-    category: String(formData.get("category") || "").trim(),
-    description: String(formData.get("description") || "").trim(),
-    content: String(formData.get("content") || "").trim(),
-    published: formData.get("published") === "on",
-  };
-}
-
+// 文章创建
 export async function createPost(
   _prevState: PostActionState,
   formData: FormData,
 ): Promise<PostActionState> {
+  await requireAdmin()
+
   const formValues = getPostFormData(formData);
 
   const result = postSchema.safeParse(formValues);
@@ -62,25 +69,46 @@ export async function createPost(
     };
   }
 
+  // 业务层检验文章分类是否存在
+  const category =
+    await db.orm.public.Category
+      .where({
+        id: data.categoryId,
+      })
+      .first();
+
+  if (!category) {
+    return {
+      error: "请选择有效的文章分类",
+      fieldErrors: {
+        categoryId: ["该分类不存在"],
+      },
+    };
+  }
+
   await db.orm.public.Post.create(data);
 
-  revalidatePath("/");
-  revalidatePath("/posts");
-  revalidatePath("/admin/posts");
+  revalidatePostPages(data.slug);
 
-  redirect(`/posts/${data.slug}`);
+  // redirect(`/posts/${data.slug}`);
+  redirect("/admin/posts?success=created");
 }
 
+
+// 文章更新
 export async function updatePost(
   _prevState: PostActionState,
   formData: FormData,
 ): Promise<PostActionState> {
+  await requireAdmin()
+
   const id = Number(formData.get("id"));
 
   if (!id) {
-    return {
-      error: "文章 ID 不存在",
-    };
+    throw new AppError(
+      ERROR_CODES.VALIDATION_ERROR,
+      "文章 ID 不存在",
+    );
   }
 
   const formValues = getPostFormData(formData);
@@ -107,30 +135,87 @@ export async function updatePost(
     };
   }
 
+  // 业务层检验文章分类是否存在
+  const category =
+    await db.orm.public.Category
+      .where({
+        id: data.categoryId,
+      })
+      .first();
+
+  if (!category) {
+    return {
+      error: "请选择有效的文章分类",
+      fieldErrors: {
+        categoryId: ["该分类不存在"],
+      },
+    };
+  }
+
   await db.orm.public.Post.where({
     id,
   }).update(data);
 
-  revalidatePath("/");
-  revalidatePath("/posts");
-  revalidatePath("/admin/posts");
-  revalidatePath(`/posts/${data.slug}`);
+  revalidatePostPages(data.slug);
 
-  redirect("/admin/posts");
+  // redirect("/admin/posts");
+  redirect("/admin/posts?success=updated");
 }
 
+
+// 文章删除
 export async function deletePost(formData: FormData) {
+  await requireAdmin();
+
   const id = Number(formData.get("id"));
 
   if (!id) {
-    throw new Error("文章 ID 不存在");
+    throw new AppError(
+      ERROR_CODES.VALIDATION_ERROR,
+      "文章 ID 不存在",
+    );
   }
 
   await db.orm.public.Post.where({
     id,
   }).delete();
 
-  revalidatePath("/");
-  revalidatePath("/posts");
-  revalidatePath("/admin/posts");
+  revalidatePostPages();
+
+  redirect("/admin/posts?success=deleted");
+}
+
+
+// 文章发布状态切换
+export async function togglePostPublished(
+  _prevState: PostMutationState,
+  formData: FormData,
+): Promise<PostMutationState>  {
+  await requireAdmin()
+
+  const id = Number(formData.get("id"));
+  const published = formData.get("published") === "true";
+
+  if (!id) {
+    throw new AppError(
+      ERROR_CODES.VALIDATION_ERROR,
+      "文章 ID 不存在",
+    );
+  }
+
+  const nextPublished = !published;
+
+  await db.orm.public.Post.where({
+    id,
+  }).update({
+    published: !published,
+  });
+
+  revalidatePostPages();
+
+  return {
+    success: nextPublished
+      ? "文章发布成功"
+      : "文章已设为草稿",
+  };
 }

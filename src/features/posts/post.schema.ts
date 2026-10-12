@@ -15,10 +15,10 @@ export const postSchema = z.object({
     .min(1, "请输入文章 Slug")
     .regex(/^[a-z0-9-]+$/, "Slug 只能包含小写字母、数字和横线"),
 
-  category: z
-    .string()
-    .trim()
-    .min(1, "请输入文章分类"),
+  categoryId: z
+    .number()
+    .int("分类 ID 必须是整数")
+    .positive("请选择文章分类"),
 
   description: z
     .string()

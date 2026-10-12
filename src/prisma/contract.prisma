@@ -1,14 +1,43 @@
 // use prisma-8
 
+// 用户数据模型
+model User {
+  id           Int      @id @default(autoincrement())
+  email        String   @unique
+  name         String?
+  passwordHash String
+  role         String   @default("ADMIN")
+
+  createdAt    TimestamptzString @default(now())
+  updatedAt    temporal.updatedAtString()
+}
+
+
+// 文章数据模型
 model Post {
   id          Int      @id @default(autoincrement())
   slug        String   @unique
   title       String
   description String
   content     String
-  category    String
   published   Boolean  @default(true)
+
+  categoryId  Int
+  category    Category @relation(fields: [categoryId], references: [id])
 
   createdAt   TimestamptzString @default(now())
   updatedAt   temporal.updatedAtString()
+}
+
+
+// 分类数据模型
+model Category {
+  id   Int    @id @default(autoincrement())
+  name String @unique
+  slug String @unique
+
+  posts Post[]
+
+  createdAt TimestamptzString @default(now())
+  updatedAt temporal.updatedAtString()
 }

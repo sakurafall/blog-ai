@@ -4,6 +4,7 @@ import { Container } from "@/components/container";
 import { PostForm } from "@/components/admin/post-form";
 import { updatePost } from "@/app/admin/posts/actions";
 import { getPostByIdForAdmin } from "@/features/posts/post.queries";
+import { getAllCategories } from "@/features/categories/category.queries";
 
 type EditPostPageProps = {
   params: Promise<{
@@ -27,15 +28,17 @@ export default async function EditPostPage({
     notFound();
   }
 
-  const post = await getPostByIdForAdmin(postId);
+  const [post, categories] = await Promise.all([
+    getPostByIdForAdmin(postId),
+    getAllCategories(),
+  ]);
 
   if (!post) {
     notFound();
   }
 
   return (
-    <main className="min-h-screen py-16">
-      <Container className="max-w-3xl">
+    <div className="min-h-screen">
         <Link
           href="/admin/posts"
           className="text-sm text-gray-500 hover:text-gray-900"
@@ -56,11 +59,11 @@ export default async function EditPostPage({
         <div className="mt-10">
           <PostForm
             action={updatePost}
+            categories={categories}
             post={post}
             submitText="保存修改"
           />
         </div>
-      </Container>
-    </main>
+    </div>
   );
 }

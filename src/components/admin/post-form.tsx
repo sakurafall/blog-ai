@@ -4,6 +4,11 @@ import { useActionState } from "react";
 import type { PostActionState } from "@/app/admin/posts/actions";
 import type { PostFormData } from "@/features/posts/post.types";
 
+type CategoryOption = {
+  id: number;
+  name: string;
+};
+
 type PostFormProps = {
   action: (
     state: PostActionState,
@@ -11,7 +16,7 @@ type PostFormProps = {
   ) => Promise<PostActionState>;
 
   post?: PostFormData;
-
+  categories: CategoryOption[]
   submitText?: string;
 };
 
@@ -19,6 +24,7 @@ const initialState: PostActionState = {};
 
 export function PostForm({
   action,
+  categories,
   post,
   submitText = "保存文章",
 }: PostFormProps) {
@@ -99,19 +105,35 @@ export function PostForm({
           分类
         </label>
 
-        <input
-          id="category"
-          name="category"
-          type="text"
-          defaultValue={post?.category}
-          placeholder="例如：Next.js"
-          className="w-full rounded-md border border-gray-300 px-3 py-2 outline-none focus:border-gray-900"
-        />
+        <select
+          name="categoryId"
+          defaultValue={
+            post?.categoryId
+              ? String(post.categoryId)
+              : ""
+          }
+          className="..."
+        >
+          <option value="">
+            请选择分类
+          </option>
 
-        {state.fieldErrors?.category && (
-          <p className="mt-2 text-sm text-red-600">
-            {state.fieldErrors.category[0]}
-          </p>
+          {categories.map((category) => (
+            <option
+              key={category.id}
+              value={category.id}
+            >
+              {category.name}
+            </option>
+          ))}
+        </select>
+
+        {state.fieldErrors?.categoryId?.map(
+          (error) => (
+            <p key={error} className="text-sm text-red-600">
+              {error}
+            </p>
+          ),
         )}
       </div>
 

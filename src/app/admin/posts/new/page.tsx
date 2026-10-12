@@ -2,13 +2,16 @@ import Link from "next/link";
 import { Container } from "@/components/container";
 import { PostForm } from "@/components/admin/post-form";
 import { createPost } from "@/app/admin/posts/actions";
+import { getAllCategories } from "@/features/categories/category.queries";
 
 export const metadata = {
   title: "新建文章",
   description: "创建一篇新的博客文章",
 };
 
-export default function NewPostPage() {
+export default async function NewPostPage() {
+  const categories = await getAllCategories();
+
   return (
       <div>
         <Link
@@ -31,6 +34,7 @@ export default function NewPostPage() {
         <div className="mt-10">
           <PostForm
             action={createPost}
+            categories={categories}
             submitText="发布文章"
           />
         </div>

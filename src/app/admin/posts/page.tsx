@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { getAllPostsForAdmin } from "@/features/posts/post.queries";
 import { DeletePostButton } from "@/components/delete-post-button";
+import { TogglePostStatusButton } from "@/components/admin/toggle-post-status-button";
+import { AdminToast } from "@/components/admin/admin-toast";
 
 export const metadata = {
   title: "文章管理",
@@ -11,6 +13,8 @@ export default async function AdminPostsPage() {
 
   return (
     <div>
+      <AdminToast />
+
       <div className="mb-8 flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">
@@ -93,6 +97,11 @@ export default async function AdminPostsPage() {
                     >
                       编辑
                     </Link>
+
+                    <TogglePostStatusButton
+                      id={post.id}
+                      published={post.published}
+                    />
 
                     <DeletePostButton
                       id={post.id}
