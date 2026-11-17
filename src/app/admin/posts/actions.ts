@@ -42,10 +42,13 @@ export async function createPost(
   _prevState: PostActionState,
   formData: FormData,
 ): Promise<PostActionState> {
+  // 确认当前请求有管理员权限
   await requireAdmin()
 
+  // 格式化表单数据
   const formValues = getPostFormData(formData);
 
+  // 通过zod验证数据
   const result = postSchema.safeParse(formValues);
 
   if (!result.success) {
@@ -57,6 +60,7 @@ export async function createPost(
     };
   }
 
+  // 业务校验：检查slug是否重复等业务规则
   const data = result.data;
 
   const existingPost = await db.orm.public.Post.where({
@@ -69,7 +73,7 @@ export async function createPost(
     };
   }
 
-  // 业务层检验文章分类是否存在
+  // 业务校验：检验文章分类是否存在
   const category =
     await db.orm.public.Category
       .where({
@@ -86,10 +90,13 @@ export async function createPost(
     };
   }
 
+  // 执行数据库写入
   await db.orm.public.Post.create(data);
 
+  // 让相关页面缓存失效，重新获取数据
   revalidatePostPages(data.slug);
 
+  // 跳转到目标页面
   // redirect(`/posts/${data.slug}`);
   redirect("/admin/posts?success=created");
 }

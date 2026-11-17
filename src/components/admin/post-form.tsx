@@ -1,6 +1,7 @@
 "use client";
 
-import { useActionState } from "react";
+// useActionState： 绑定 Action，管理 pending 和返回的 state
+import { useActionState } from "react"; 
 import type { PostActionState } from "@/app/admin/posts/actions";
 import type { PostFormData } from "@/features/posts/post.types";
 
