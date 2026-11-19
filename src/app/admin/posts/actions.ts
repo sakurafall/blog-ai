@@ -174,21 +174,49 @@ export async function updatePost(
 export async function deletePost(formData: FormData) {
   await requireAdmin();
 
+  // 检查文章 ID 格式是否合法
   const id = Number(formData.get("id"));
 
-  if (!id) {
-    throw new AppError(
-      ERROR_CODES.VALIDATION_ERROR,
-      "文章 ID 不存在",
-    );
+  // 可预期的业务失败
+  if (!Number.isSafeInteger(id) || id <= 0) {
+    return {
+      success: false as const,
+      error: "文章 ID 格式不合法",
+    };
   }
 
-  await db.orm.public.Post.where({
-    id,
-  }).delete();
+  // 检查文章是否存在
+  const existingPost = await db.orm.public.Post
+  .where({ id })
+  .first();
+
+  // 可预期的业务失败
+  if (!existingPost) {
+    return {
+      success: false as const,
+      error: "文章不存在",
+    };
+  }
+
+  // 异常流程 (如数据库连接失败, 超时, SQL 执行异常, 连接池异常)
+  try {
+    await db.orm.public.Post
+      .where({ id })
+      .delete();
+  } catch (error) {
+    console.error("删除文章失败", error);
+
+    return {
+      success: false as const,
+      error: "删除失败，请稍后重试",
+    };
+  }
 
   revalidatePostPages();
 
+
+  // 注意点：Next.js中redirect, 它内部会通过抛出一个特殊的控制流信号来中断当前执行过程，让 Next.js 去完成跳转。
+  // 放到catch中的话，会被捕获。
   redirect("/admin/posts?success=deleted");
 }
 

@@ -24,11 +24,22 @@ export function AdminToast() {
     }
 
     if (success === "deleted") {
-      toast.success("文章删除成功");
+      toast.success("文章删除成功", { id: "post-action-success" });
     }
 
-    // 显示一次以后，把参数清掉
-    router.replace("/admin/posts");
+    // 显示一次以后，把提示参数清掉，如果有其他参数保留
+    const params = new URLSearchParams(
+      searchParams.toString()
+    );
+
+    params.delete("success");
+
+    const query = params.toString();
+
+    router.replace(
+      query ? `/admin/posts?${query}` : "/admin/posts",
+      { scroll: false }
+    );
   }, [searchParams, router]);
 
   return null;
