@@ -22,6 +22,12 @@ const navItems = [
     match: (pathname: string) =>
       pathname === "/admin/posts/new",
   },
+  {
+    label: "分类管理",
+    href: "/admin/categories",
+    match: (pathname: string) =>
+      pathname === "/admin/categories",
+  },
 ];
 
 export function AdminSidebar() {

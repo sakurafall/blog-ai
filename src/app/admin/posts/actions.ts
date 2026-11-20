@@ -111,11 +111,10 @@ export async function updatePost(
 
   const id = Number(formData.get("id"));
 
-  if (!id) {
-    throw new AppError(
-      ERROR_CODES.VALIDATION_ERROR,
-      "文章 ID 不存在",
-    );
+  if (!Number.isSafeInteger(id) || id <= 0) {
+    return {
+      error: "文章 ID 格式不合法",
+    };
   }
 
   const formValues = getPostFormData(formData);
@@ -132,6 +131,18 @@ export async function updatePost(
 
   const data = result.data;
 
+  // 查询当前正在编辑的文章
+  const currentPost = await db.orm.public.Post
+    .where({ id })
+    .first();
+
+  if (!currentPost) {
+    return {
+      error: "文章不存在",
+    };
+  }
+
+  // 检查 slug 是否被其他文章占用
   const existingPost = await db.orm.public.Post.where({
     slug: data.slug,
   }).first();
@@ -163,9 +174,12 @@ export async function updatePost(
     id,
   }).update(data);
 
-  revalidatePostPages(data.slug);
+  revalidatePostPages(currentPost.slug);
 
-  // redirect("/admin/posts");
+  if (currentPost.slug !== data.slug) {
+    revalidatePostPages(data.slug);
+  }
+
   redirect("/admin/posts?success=updated");
 }
 

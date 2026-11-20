@@ -16,8 +16,9 @@ type PostFormProps = {
     formData: FormData,
   ) => Promise<PostActionState>;
 
+  // post可选，组件支持两种模式（新建/编辑）
   post?: PostFormData;
-  categories: CategoryOption[]
+  categories: CategoryOption[];
   submitText?: string;
 };
 

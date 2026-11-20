@@ -24,7 +24,7 @@ export default async function EditPostPage({
 
   const postId = Number(id);
 
-  if (!postId) {
+  if (!Number.isSafeInteger(postId) || postId <= 0) {
     notFound();
   }
 
