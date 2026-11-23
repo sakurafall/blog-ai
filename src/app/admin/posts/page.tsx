@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { getAllPostsForAdmin } from "@/features/posts/post.queries";
-import { DeletePostButton } from "@/components/delete-post-button";
+import { DeletePostButton } from "@/components/admin/posts/delete-post-button";
 import { TogglePostStatusButton } from "@/components/admin/toggle-post-status-button";
 import { AdminToast } from "@/components/admin/admin-toast";
 
@@ -13,7 +13,13 @@ export default async function AdminPostsPage() {
 
   return (
     <div>
-      <AdminToast />
+      <AdminToast
+        messages={{
+          created: "文章创建成功",
+          updated: "文章保存成功",
+          deleted: "文章删除成功",
+        }}
+      />
 
       <div className="mb-8 flex items-center justify-between">
         <div>

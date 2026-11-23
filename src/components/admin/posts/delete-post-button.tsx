@@ -38,17 +38,11 @@ export function DeletePostButton({
 
     // ⑤ 开始异步操作
     startTransition(async () => {
-      try {
-        const result = await deletePost(formData);
+      const result = await deletePost(formData);
 
-        // ⑥ 处理可预期的业务错误
-        if (result?.success === false) {
-          toast.error(result.error);
-        }
-      } catch (error) {
-        // ⑦ 处理意外异常
-        console.error("删除文章失败", error);
-        toast.error("删除失败，请稍后重试");
+      // ⑥ 处理可预期的业务错误
+      if (result?.success === false) {
+        toast.error(result.error);
       }
     });
   };

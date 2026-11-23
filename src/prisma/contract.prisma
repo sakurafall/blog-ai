@@ -32,11 +32,11 @@ model Post {
 
 // 分类数据模型
 model Category {
-  id   Int    @id @default(autoincrement())
-  name String @unique
-  slug String @unique
+  id        Int    @id @default(autoincrement())
+  name      String @unique
+  slug      String @unique
 
-  posts Post[]
+  posts     Post[]
 
   createdAt TimestamptzString @default(now())
   updatedAt temporal.updatedAtString()

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { PostForm } from "@/components/admin/post-form";
+import { PostForm } from "@/components/admin/posts/post-form";
 import { createPost } from "@/app/admin/posts/actions";
 import { getAllCategories } from "@/features/categories/category.queries";
 

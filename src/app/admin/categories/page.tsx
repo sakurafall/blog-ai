@@ -1,5 +1,7 @@
 import Link from "next/link";
 import { getAllCategories } from "@/features/categories/category.queries";
+import { DeleteCategoryButton } from "@/components/admin/categories/delete-category-button";
+import { AdminToast } from "@/components/admin/admin-toast";
 
 export const metadata = {
   title: "分类管理",
@@ -10,6 +12,14 @@ export default async function AdminCategoriesPage() {
 
   return (
     <div>
+      <AdminToast 
+        messages={{
+          created: "分类创建成功",
+          updated: "分类保存成功",
+          deleted: "分类删除成功",
+        }}
+      />
+
       <div className="mb-8 flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">
@@ -22,7 +32,7 @@ export default async function AdminCategoriesPage() {
         </div>
 
         <Link
-          href="/admin/NewCategoryPage/new"
+          href="/admin/categories/new"
           className="rounded-md bg-gray-900 px-4 py-2 text-sm font-medium text-white hover:bg-gray-700"
         >
           新建分类
@@ -59,12 +69,19 @@ export default async function AdminCategoriesPage() {
                 </td>
 
                 <td className="px-4 py-3">
-                  <Link
-                    href={`/admin/categories/${category.id}/edit`}
-                    className="hover:text-blue-600"
-                  >
-                    编辑
-                  </Link>
+                  <div className="flex items-center gap-4">
+                    <Link
+                      href={`/admin/categories/${category.id}/edit`}
+                      className="hover:text-blue-600"
+                    >
+                      编辑
+                    </Link>
+
+                    <DeleteCategoryButton 
+                      id={category.id}
+                      name={category.name}
+                    />
+                  </div>
                 </td>
               </tr>
             ))}

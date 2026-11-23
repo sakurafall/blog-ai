@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Container } from "@/components/container";
-import { PostForm } from "@/components/admin/post-form";
+import { PostForm } from "@/components/admin/posts/post-form";
 import { updatePost } from "@/app/admin/posts/actions";
 import { getPostByIdForAdmin } from "@/features/posts/post.queries";
 import { getAllCategories } from "@/features/categories/category.queries";

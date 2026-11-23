@@ -1,11 +1,20 @@
 "use client";
 
 import { useEffect } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 
-export function AdminToast() {
+type AdminToastProps = {
+  messages: {
+    created?: string;
+    updated?: string;
+    deleted?: string;
+  };
+};
+
+export function AdminToast({messages}: AdminToastProps) {
   const searchParams = useSearchParams();
+  const pathname = usePathname();
   const router = useRouter();
 
   useEffect(() => {
@@ -15,17 +24,16 @@ export function AdminToast() {
       return;
     }
 
-    if (success === "created") {
-      toast.success("文章创建成功", { id: "post-action-success" });
+    const message =
+      messages[success as keyof typeof messages];
+
+    if (!message) {
+      return;
     }
 
-    if (success === "updated") {
-      toast.success("文章保存成功", { id: "post-action-success" });
-    }
-
-    if (success === "deleted") {
-      toast.success("文章删除成功", { id: "post-action-success" });
-    }
+    toast.success(message, {
+      id: "admin-action-success",
+    });
 
     // 显示一次以后，把提示参数清掉，如果有其他参数保留
     const params = new URLSearchParams(
@@ -37,10 +45,10 @@ export function AdminToast() {
     const query = params.toString();
 
     router.replace(
-      query ? `/admin/posts?${query}` : "/admin/posts",
+      query ? `${pathname}?${query}` : pathname,
       { scroll: false }
     );
-  }, [searchParams, router]);
+  }, [searchParams, pathname, router, messages]);
 
   return null;
 }

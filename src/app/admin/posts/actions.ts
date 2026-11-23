@@ -228,7 +228,6 @@ export async function deletePost(formData: FormData) {
 
   revalidatePostPages();
 
-
   // 注意点：Next.js中redirect, 它内部会通过抛出一个特殊的控制流信号来中断当前执行过程，让 Next.js 去完成跳转。
   // 放到catch中的话，会被捕获。
   redirect("/admin/posts?success=deleted");
