@@ -8,6 +8,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
+    "test:db:init": "node scripts/run-test-db.mjs init",
+    "test:integration": "node scripts/run-test-db.mjs test",
     "postinstall": "prisma skills sync || exit 0",
     "contract:emit": "prisma contract emit"
   },
